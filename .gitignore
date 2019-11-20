@@ -4,3 +4,6 @@
 # Java complie files
 target
 
+# macOS file
+.DS_Store
+
