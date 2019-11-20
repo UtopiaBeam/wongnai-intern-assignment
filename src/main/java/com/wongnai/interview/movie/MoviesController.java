@@ -29,13 +29,8 @@ public class MoviesController {
 	@Qualifier("simpleMovieSearchService")
 	private MovieSearchService movieSearchService;
 
-	@Autowired
-	private MovieDataService movieDataService;
-
 	@RequestMapping(method = RequestMethod.GET)
-	public MoviesResponse helloWorld() {
-		return movieDataService.fetchAll();
-	}
+	public String helloWorld() { return "Hello World!"; }
 
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	public List<Movie> searchTitleWithKeyword(@RequestParam("q") String keyword) {
