@@ -21,6 +21,10 @@ public class SimpleMovieSearchService implements MovieSearchService {
 
     @Override
     public List<Movie> search(String queryText) {
+        //TODO: Step 2 => Implement this method by using data from MovieDataService
+        // All test in SimpleMovieSearchServiceIntegrationTest must pass.
+        // Please do not change @Component annotation on this class
+
         MoviesResponse movies = movieDataService.fetchAll();
 
         List<Movie> result = new ArrayList();
