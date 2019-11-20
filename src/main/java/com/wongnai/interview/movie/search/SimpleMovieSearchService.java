@@ -24,17 +24,16 @@ public class SimpleMovieSearchService implements MovieSearchService {
         MoviesResponse movies = movieDataService.fetchAll();
 
         List<Movie> result = new ArrayList();
-        for (MovieData movie : movies) {
+        for (MovieData m : movies) {
             // Get lowercase words
-            List<String> words = Arrays.asList(movie.getTitle().split(" "));
+            List<String> words = Arrays.asList(m.getTitle().split(" "));
             for (int i = 0; i < words.size(); i++) {
                 words.set(i, words.get(i).toLowerCase());
             }
 
             if (words.contains(queryText.toLowerCase())) {
-                Movie newMovie = new Movie(movie.getTitle());
-                newMovie.setActors(movie.getCast());
-                result.add(newMovie);
+                Movie movie = new Movie(m.getTitle(), m.getCast());
+                result.add(movie);
             }
         }
         return result;
