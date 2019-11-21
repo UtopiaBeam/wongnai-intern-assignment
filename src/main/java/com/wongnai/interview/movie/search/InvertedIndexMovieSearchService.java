@@ -2,6 +2,7 @@ package com.wongnai.interview.movie.search;
 
 import java.util.*;
 
+import com.wongnai.interview.movie.sync.MovieDataSynchronizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
@@ -15,8 +16,6 @@ import com.wongnai.interview.movie.MovieSearchService;
 public class InvertedIndexMovieSearchService implements MovieSearchService {
 	@Autowired
 	private MovieRepository movieRepository;
-
-	private HashMap<String, HashSet<Long>> cache;
 
 	private <T> HashSet<T> intersection(HashSet<T> list1, HashSet<T> list2) {
 		HashSet<T> result = new HashSet<>(list1);
@@ -43,25 +42,10 @@ public class InvertedIndexMovieSearchService implements MovieSearchService {
 		// you have to return can be union or intersection of those 2 sets of ids.
 		// By the way, in this assignment, you must use intersection so that it left for just movie id 5.
 
-		// Initialize if not
-		if (cache == null) {
-			cache = new HashMap<>();
-			for (Movie movie: movieRepository.findAll()) {
-				String[] words = movie.getName().split(" ");
-				for (String word: words) {
-					String key = word.toLowerCase();
-					if (cache.get(key) == null) {
-						cache.put(key, new HashSet<>());
-					}
-					cache.get(key).add(movie.getId());
-				}
-			}
-		}
-
 		boolean isInitialized = false;
 		HashSet<Long> ids = new HashSet<>();
-		for (String word: queryText.split(" ")) {
-			HashSet<Long> validIds = cache.getOrDefault(word.toLowerCase(), new HashSet<>());
+		for (String word: queryText.toLowerCase().split(" ")) {
+			HashSet<Long> validIds = MovieDataSynchronizer.cache.getOrDefault(word, new HashSet<>());
 			ids = isInitialized ? intersection(ids, validIds) : validIds;
 			isInitialized = true;
 		}

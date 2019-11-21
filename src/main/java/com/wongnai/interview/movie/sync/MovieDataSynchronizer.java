@@ -12,6 +12,8 @@ import com.wongnai.interview.movie.MovieRepository;
 import com.wongnai.interview.movie.external.MovieDataService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 @Component
@@ -22,8 +24,11 @@ public class MovieDataSynchronizer {
 	@Autowired
 	private MovieRepository movieRepository;
 
+	public static HashMap<String, HashSet<Long>> cache = new HashMap<>();
+
 	@Transactional
 	public void forceSync() {
+		if (movieRepository.count() > 0)		return;
 		MoviesResponse response = movieDataService.fetchAll();
 		List<Movie> movies = new ArrayList();
 		for (MovieData m: response) {
@@ -31,5 +36,15 @@ public class MovieDataSynchronizer {
 			movies.add(movie);
 		}
 		movieRepository.saveAll(movies);
+
+		for (Movie movie: movieRepository.findAll()) {
+			String[] words = movie.getName().toLowerCase().split(" ");
+			for (String key: words) {
+				if (cache.get(key) == null) {
+					cache.put(key, new HashSet<>());
+				}
+				cache.get(key).add(movie.getId());
+			}
+		}
 	}
 }
